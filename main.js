@@ -5,13 +5,14 @@ const urlChecker = require('./libs/urlChecker');
 const tray = require('./controllers/tray');
 const { app, BrowserWindow, webContents } = electron;
 
+const startMinimized = process.argv.indexOf('--hidden') !== -1;
+
 app.on('ready', function() {
   var mainWindow = new BrowserWindow({
     title: 'Youtube TV',
-    width: 800,
-    height: 600,
+    fullscreen: !startMinimized,
     icon: __dirname + '/favicon.ico',
-    show: false
+    show: !startMinimized
   });
   mainWindow.setMenu(null);
   tray.init(mainWindow);
@@ -24,10 +25,6 @@ app.on('ready', function() {
       mainWindow.focus();
       mainWindow.maximize();
       mainWindow.setFullScreen(true);
-    }
-
-    if (urlChecker.includePath("browse-sets")) {
-      mainWindow.setFullScreen(false);
     }
   });
 
