@@ -1,4 +1,5 @@
 const electron = require('electron');
+const { app } = electron;
 const platform = require('os').platform();
 
 const { Tray, Menu } = electron;
@@ -27,7 +28,7 @@ function setupTray() {
     }, { label: 'Hide app',
       click() { mainWindow.hide(); }
     }, { label: 'Exit',
-      click() { mainWindow.destroy(); }
+      click() { app.exit(); }
     }
   ]); tray.setContextMenu(contextMenu);
   tray.on('click', () => {
