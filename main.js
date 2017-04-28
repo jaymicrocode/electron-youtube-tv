@@ -10,10 +10,31 @@ const { app, BrowserWindow, webContents, dialog } = electron;
 
 const startMinimized = process.argv.indexOf('--hidden') !== -1;
 
-const ytAutoLauncher = new AutoLaunch({
-  name: TITLE,
-  isHidden: true, // This adds a --hidden flag, which we use to start the app minimized
+let mainWindow = null;
+
+const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWindow) {
+    mainWindow.show();
+  }
 });
+
+if (shouldQuit) {
+  app.quit();
+}
+
+let ytAutoLauncher = null;
+
+// A weird thing, but auto-launch doesn't work when used in combination with `app.makeSingleInstance`.
+// Hence this weird hack.
+try {
+  ytAutoLauncher = new AutoLaunch({
+    name: TITLE,
+    isHidden: true, // This adds a --hidden flag, which we use to start the app minimized
+  });
+} catch(e) {
+  console.log(e);
+}
 
 function askStartup() {
   dialog.showMessageBox({
@@ -29,12 +50,14 @@ function askStartup() {
 }
 
 app.on('ready', function() {
-  ytAutoLauncher.isEnabled().then((startup) => {
-    if (!startup) {
-      askStartup();
-    }
-  });
-  var mainWindow = new BrowserWindow({
+  if (ytAutoLauncher) {
+    ytAutoLauncher.isEnabled().then((startup) => {
+      if (!startup) {
+        askStartup();
+      }
+    });
+  }
+  mainWindow = new BrowserWindow({
     title: TITLE,
     fullscreen: !startMinimized,
     icon: __dirname + '/favicon.ico',
