@@ -64,6 +64,7 @@ app.on('ready', function() {
     show: !startMinimized
   });
   mainWindow.setMenu(null);
+  // mainWindow.setIgnoreMouseEvents(true);
   tray.init(mainWindow);
 
   mainWindow.webContents.on('did-navigate-in-page', (event, url, isMainFrame) => {
@@ -84,5 +85,8 @@ app.on('ready', function() {
   });
 
   mainWindow.loadURL('https://www.youtube.com/tv');
+  mainWindow.webContents.on('did-finish-load', function() {
+    mainWindow.webContents.insertCSS('body { cursor: none !important; pointer-events: none !important; }');
+  });
 
 });
