@@ -34,7 +34,7 @@ app.on('ready', function() {
 
   mainWindow.loadURL('https://www.youtube.com/tv');
   mainWindow.webContents.on('did-finish-load', function() {
-    mainWindow.webContents.insertCSS('body { cursor: none !important; pointer-events: none !important; }');
+    mainWindow.webContents.insertCSS('* { cursor: none !important; pointer-events: none !important; }');
   });
 
 });
